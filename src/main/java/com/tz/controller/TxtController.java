@@ -1,7 +1,5 @@
 package com.tz.controller;
 
-import cn.hutool.core.util.CharsetUtil;
-import com.tz.entity.TxtEntity;
 import com.tz.service.TxtService;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
@@ -13,15 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,30 +28,19 @@ public class TxtController {
     @Autowired
     TxtService txtService;
 
-    public static final String TXT_FILE_DELIMITER = "\\|";
 
-
+    /**
+     * 上传文件并保存数据
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @PostMapping("/uploadTxt")
     public Map<String, Object> readTxtFile(@RequestPart MultipartFile file) throws IOException, InterruptedException {
         Instant start = Instant.now();
-        //转成字符流
-        InputStream is = file.getInputStream();
-        InputStreamReader isReader = new InputStreamReader(is, CharsetUtil.GBK);
-        BufferedReader br = new BufferedReader(isReader);
-        List<TxtEntity> list = new ArrayList<>();
-        //循环逐行读取
-        while (br.ready()) {
-            TxtEntity txtEntity = new TxtEntity();
-            String str = br.readLine();
-            String[] arr = str.split(TXT_FILE_DELIMITER);
-            txtEntity.setId(arr[0]);
-            txtEntity.setName(arr[1]);
-            list.add(txtEntity);
-        }
-        //关闭流
-        br.close();
-        log.info("条数：{}", list.size());
-        txtService.insertTxt(list);
+        txtService.insertTxt(file);
         Map<String, Object> map = new HashMap<>();
         map.put("data", "执行成功");
         Instant end = Instant.now();
@@ -72,11 +54,21 @@ public class TxtController {
     }
 
 
-    @GetMapping("/getOs")
-    public String getOs(HttpServletRequest request) {
+    /**
+     * 获取设备信息
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("/getDeviceInfo")
+    public Map<String, Object> getOs(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
         final UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
         String os = userAgent.getOperatingSystem().getName();
-        return os;
+        String browserName = userAgent.getBrowser().getName();
+        map.put("os", os);
+        map.put("browserName", browserName);
+        return map;
     }
 
 

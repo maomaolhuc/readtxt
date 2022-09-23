@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "txt.thread")
 @Data
 public class ThreadPoolConfigProperties {
+
     private Integer coreSize;
 
     private Integer maxSize;

@@ -4,14 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tz.dao.TxtMapper">
 
+    <!--新增txt数据-->
     <insert id="insertTxt">
         insert into txt
         values (#{id}, #{name})
     </insert>
 
+    <!--foreach批量插入-->
     <insert id="insertBatch">
         insert into txt(id,name)
-        <foreach item="item" collection="list" open="(" separator="union all" close=")" >
+        <foreach item="item" collection="list" open="(" separator="union all" close=")">
             select #{item.id} ,#{item.name} from dual
         </foreach>
     </insert>
