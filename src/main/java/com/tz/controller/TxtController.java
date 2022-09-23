@@ -39,9 +39,7 @@ public class TxtController {
 
 
     @PostMapping("/uploadTxt")
-    public Map<String, Object> readTxtFile(@RequestPart MultipartFile file, HttpServletRequest request) throws IOException, InterruptedException {
-        final UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
-        String os = userAgent.getOperatingSystem().getName();
+    public Map<String, Object> readTxtFile(@RequestPart MultipartFile file) throws IOException, InterruptedException {
         Instant start = Instant.now();
         //转成字符流
         InputStream is = file.getInputStream();
@@ -57,12 +55,10 @@ public class TxtController {
             txtEntity.setName(arr[1]);
             list.add(txtEntity);
         }
-        log.info("条数：{}", list.size());
-        txtService.insertTxt(list);
-        //list.forEach(txt -> txtService.insert(txt));
-
         //关闭流
         br.close();
+        log.info("条数：{}", list.size());
+        txtService.insertTxt(list);
         Map<String, Object> map = new HashMap<>();
         map.put("data", "执行成功");
         Instant end = Instant.now();
@@ -77,7 +73,7 @@ public class TxtController {
 
 
     @GetMapping("/getOs")
-    public String getOs(HttpServletRequest request){
+    public String getOs(HttpServletRequest request) {
         final UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
         String os = userAgent.getOperatingSystem().getName();
         return os;

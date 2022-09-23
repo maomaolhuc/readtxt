@@ -15,4 +15,5 @@
             select #{item.id} ,#{item.name} from dual
         </foreach>
     </insert>
+
 </mapper>
